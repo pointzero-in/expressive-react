@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import { Segment, Input, Grid, Button, Icon, Checkbox, Form } from 'semantic-ui-react';
+import { Segment, Input, Grid, Button, Icon, Checkbox, Form, Image } from 'semantic-ui-react';
 
 const TODOS = [
 	{
@@ -101,6 +101,7 @@ class App extends Component {
 		return (
 			<div style={{display: 'flex', alignItems: 'center', flexDirection: 'column', height: '100vh'}}>
 				<div style={{margin: 'auto', maxWidth: '600px', padding: '40px 0', width: '100%'}}>
+						<Image centered size="small" src="/static/images/logo.png" alt=""/>
 						<Segment.Group>
 							{
 								_.map(todos, (todo, index) => (
