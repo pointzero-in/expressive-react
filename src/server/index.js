@@ -17,8 +17,6 @@ app.use(STATIC_PATH, express.static('public'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-api(app, {});
-
 app.get('/*', (req, res) => {
   res.send(renderApp(APP_NAME));
 });
@@ -29,5 +27,6 @@ app.listen(WEB_PORT, () => {
   '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`);
   MongoClient.connect(isProd ? MONGO_URI : 'mongodb://localhost:27017/test', function(err, db) {
   	console.log("DB Connected");
+  	api(app, db);
 	});
 });
