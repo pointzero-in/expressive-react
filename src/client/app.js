@@ -31,29 +31,65 @@ class App extends Component {
 		super(props);
 		this.state = {
 			todos: TODOS,
+			newTodo: {
+				id: 0,
+				name: '',
+				status: 'PENDING',
+			}
 		}
 	}
 
 	addTodo = (e) => {
 		e.preventDefault();
 		this.setState(prevState => {
+			if (prevState.newTodo.status === 'EDIT') {
+				const todos = _.cloneDeep(prevState.todos);
+				_.each(todos, todo => {
+					if (todo.id === prevState.newTodo.id) {
+						todo.name = prevState.newTodo.name;
+					}
+				});
+				return {
+					todos,
+					newTodo: {
+						id: 0,
+						name: '',
+						status: 'PENDING',
+					}
+				}
+			}
 			return {
 				todos: [
 					...prevState.todos,
 					{
+						...prevState.newTodo,
 						id: prevState.todos.length + 1,
-						name: this.input,
-						status: 'PENDING',
+						status: 'PENDING'
 					}
-				]
+				],
+				newTodo: {
+					...prevState.newTodo,
+					status: 'PENDING',
+					name: ''
+				}
 			}
 		});
+	}
+
+	completeTodo(id, checked) {
+		const todos = _.each(_.cloneDeep(this.state.todos), todo => {
+			if (todo.id === id && this.state.newTodo.id !== id) {
+				todo.status = checked ? 'COMPLETE' : 'PENDING';
+			}
+			return todo;
+		});
+		this.setState({todos});
 	}
 
 	removeTodo(todoId) {
 		const todos = [];
 		_.each(this.state.todos, todo => {
-			if (todo.id !== todoId) {
+			if (todo.id !== todoId || this.state.newTodo.id === todoId) {
 				todos.push(todo);
 			}
 		});
@@ -64,20 +100,42 @@ class App extends Component {
 		const todos = _.cloneDeep(this.state.todos);
 		return (
 			<div style={{display: 'flex', alignItems: 'center', flexDirection: 'column', height: '100vh'}}>
-				<div style={{margin: 'auto', width: '600px', padding: '40px 0'}}>
+				<div style={{margin: 'auto', maxWidth: '600px', padding: '40px 0', width: '100%'}}>
 						<Segment.Group>
 							{
 								_.map(todos, (todo, index) => (
 									<Segment key={index}>
 										<Grid>
 											<Grid.Column width={12}>
-												<Checkbox label={todo.name} />
+												<Checkbox
+													checked={todo.status === 'COMPLETE'}
+													style={todo.status === 'COMPLETE' ? {textDecoration: 'line-through'} : {}}
+													label={todo.name}
+													onChange={(e, {checked}) => this.completeTodo(todo.id, checked)}
+												/>
 											</Grid.Column>
-											<Grid.Column width={2} style={{cursor: 'pointer', color: '#1a69a4'}}>
-												{/*<Icon name="pencil" />*/}
+											<Grid.Column width={2} style={{color: '#1a69a4'}}>
+												<Icon
+													name="pencil"
+													style={{cursor: 'pointer'}}
+													disabled={todo.status === 'COMPLETE'}
+													onClick={() => {
+															if (todo.status === 'COMPLETE') {
+																return false;
+															}
+															this.setState({
+																newTodo: {
+																	id: todo.id,
+																	name: todo.name,
+																	status: 'EDIT',
+																}
+															})
+														}
+													}
+												/>
 											</Grid.Column>
-											<Grid.Column width={2} style={{cursor: 'pointer', color: '#db2828'}}>
-												<Icon onClick={() => this.removeTodo(todo.id)} name="close" />
+											<Grid.Column width={2} style={{color: '#db2828'}}>
+												<Icon style={{cursor: 'pointer'}} onClick={() => this.removeTodo(todo.id)} name="close" />
 											</Grid.Column>
 										</Grid>
 									</Segment>
@@ -87,7 +145,15 @@ class App extends Component {
 								<Form onSubmit={this.addTodo}>
 									<Grid>
 										<Grid.Column width={13}>
-												<Input onChange={(e, {value}) => this.input = value} fluid placeholder='Add a new todo...' />
+												<Input
+													onChange={(e, {value}) => this.setState(prevState => ({
+															newTodo: {...prevState.newTodo, name: value}
+														})
+													)}
+													value={this.state.newTodo.name}
+													placeholder='Add a new todo...'
+													fluid
+												/>
 										</Grid.Column>
 										<Grid.Column width={3}>
 											<Button type="submit" fluid primary>Add</Button>
