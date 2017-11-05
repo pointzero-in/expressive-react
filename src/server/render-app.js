@@ -15,7 +15,7 @@ const renderApp = (title) =>
 		<!--Start of Tawk.to Script-->
 		<script type="text/javascript">
 		if (window.location.host.indexOf("rutvij.in") === '-1') {
-			return false;
+			return;
 		}
 		var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 		(function(){
