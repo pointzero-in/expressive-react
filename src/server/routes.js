@@ -1,6 +1,7 @@
-'use strict'
+
 import { Router } from 'express';
 import * as TodoController from './controllers/todo.controller';
+
 const router = new Router();
 
 router.get('/todos', TodoController.getTodos);

@@ -1,51 +1,85 @@
-import path from 'path'
-
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import { WDS_PORT } from './src/shared/config';
 import { isProd } from './src/shared/util';
 
 export default {
-	entry: [
-		'react-hot-loader/patch',
-		'./src/client',
-	],
+	entry: {
+		vendor: ['antd'],
+		app: ['babel-polyfill', 'react-hot-loader/patch', './src/client'],
+	},
 	output: {
-		filename: 'js/bundle.js',
-		path: path.resolve(__dirname, 'dist'),
-		publicPath: isProd ? '/static/' : `http://localhost:${WDS_PORT}/dist/`,
+		filename: 'static/js/[name].[hash].js',
+		path: path.resolve(__dirname, 'dist')
 	},
 	module: {
 		rules: [
 			{
-				test: /\.(js|jsx)$/,
+				test: /\.(js)$/,
+				exclude: /node_modules/,
 				use: [{
 					loader: 'babel-loader',
 					options: {
 						presets: [
-							'es2015',
-							'stage-2'
-						]
-					}
+							'env',
+							'stage-2',
+						],
+						plugins: [
+							"transform-decorators-legacy",
+						],
+					},
 				}],
-				exclude: /node_modules/
+			},
+			{
+				test: /\.css$/,
+				use: [
+					{
+						loader: 'style-loader',
+					},
+					{
+						loader: 'css-loader',
+						options: {
+							sourceMap: true,
+						},
+					},
+				],
 			},
 		],
 	},
+	mode: isProd ? 'production' : 'development',
 	devtool: isProd ? false : 'source-map',
 	resolve: {
-		extensions: ['.js', '.jsx'],
+		extensions: ['.js'],
 	},
 	devServer: {
 		port: WDS_PORT,
+		historyApiFallback: true,
 		hot: true,
+		compress: true,
 		headers: {
 			'Access-Control-Allow-Origin': '*',
 		},
 	},
+	optimization: {
+			splitChunks: {
+				cacheGroups: {
+					vendor: {
+						chunks: 'initial',
+						test: 'vendor',
+						name: 'vendor',
+						enforce: true,
+					},
+				},
+			},
+		},
 	plugins: [
+		new HtmlWebpackPlugin({
+      template: "./public/index.html",
+    }),
 		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.NamedModulesPlugin(),
 		new webpack.NoEmitOnErrorsPlugin(),
 	],
-}
+};

@@ -1,20 +1,22 @@
+import path from 'path';
 import compression from 'compression';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import routes from './routes';
 
-import { APP_NAME, STATIC_PATH, WEB_PORT, MONGO_URI } from '../shared/config';
+import {
+	STATIC_PATH, WEB_PORT, MONGO_URI,
+} from '../shared/config';
 import { isProd } from '../shared/util';
-import renderApp from './render-app';
+
 const app = express();
 
 mongoose.Promise = global.Promise;
-mongoose.connect(isProd ? MONGO_URI : 'mongodb://localhost:27017/test',
-	{ useMongoClient: true });
+mongoose.connect(isProd ? MONGO_URI : 'mongodb://localhost:27017/test');
 
 const db = mongoose.connection;
-db.on('error', (err) => {console.error('connection unsuccessful', error)});
+db.on('error', (error) => { console.error('connection unsuccessful', error); });
 db.once('open', () => {
 	console.log("Connection to DB Successful");
 });
@@ -27,11 +29,11 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 app.use('/api', routes);
 
 app.get('/', (req, res) => {
-  res.send(renderApp(APP_NAME));
+	res.sendFile(path.resolve(__dirname, '../../dist/index.html'));
 });
 
 app.listen(WEB_PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Server running on port ${WEB_PORT} ${isProd ? '(production)' :
-  '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`);
+	// eslint-disable-next-line no-console
+	console.log(`Server running on port ${WEB_PORT} ${isProd ? '(production)'
+		: '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`);
 });

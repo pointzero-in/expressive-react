@@ -1,11 +1,15 @@
 {
 	"extends": "airbnb",
 	"parser": "babel-eslint",
-	"plugins": [
-		"compat"
-  ],
 	"rules": {
-		"indent": [2, "tab"],
+		"indent": [
+			2,
+			"tab"
+		],
+		"space-before-blocks": [
+			"error",
+			"always"
+		],
 		"no-tabs": 0,
 		"quotes": 0,
 		"no-param-reassign": 0,
@@ -15,16 +19,22 @@
 		"import/no-extraneous-dependencies": 0,
 		"import/no-unresolved": 0,
 		"import/extensions": 0,
-
-		// react
+		"click-events-have-key-events": 0,
+		"jsx-a11y/click-events-have-key-events": 0,
+		"jsx-a11y/no-noninteractive-element-interactions": 0,
 		"react/prefer-es6-class": 0,
 		"react/jsx-filename-extension": 0,
 		"react/jsx-indent": 0,
 		"react/no-did-mount-set-state": 0,
-		"react/jsx-indent-props": [2, "tab"],
+		"react/jsx-indent-props": [
+			2,
+			"tab"
+		],
 		"react/forbid-prop-types": 0,
-
-		"compat/compat": 2
+		"react/no-render-return-value": 0,
+		"react/no-array-index-key": 0,
+		"no-nested-ternary": 0,
+		"react/jsx-one-expression-per-line": 0
 	},
 	"globals": {
 		"BASENAME": true

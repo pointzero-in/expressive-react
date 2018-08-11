@@ -1,29 +1,30 @@
-import 'babel-polyfill';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'connected-react-router/immutable';
 import { AppContainer } from 'react-hot-loader';
 
-import App from './app'
-import { APP_CONTAINER_SELECTOR } from '../shared/config';
+import History from './History';
+import Store from './Store/Store';
+import App from './App';
+import './styles.css';
 
-const rootEl = document.querySelector(APP_CONTAINER_SELECTOR);
-
-const wrapApp = AppComponent =>
-	<BrowserRouter>
-		<AppContainer>
-			<AppComponent />
-		</AppContainer>
-	</BrowserRouter>
-
-ReactDOM.render(wrapApp(App), rootEl)
+const wrapApp = AppComponent => (
+	<AppContainer>
+		<Provider store={Store}>
+			<ConnectedRouter history={History}>
+				<AppComponent />
+			</ConnectedRouter>
+		</Provider>
+	</AppContainer>
+);
+ReactDOM.render(wrapApp(App), document.getElementById('root'));
 
 if (module.hot) {
 	// flow-disable-next-line
-	module.hot.accept('./app', () => {
+	module.hot.accept('./App', () => {
 		// eslint-disable-next-line global-require
-		const NextApp = require('./app').default
-		ReactDOM.render(wrapApp(NextApp), rootEl)
+		const NextApp = require('./App').default;
+		ReactDOM.render(wrapApp(NextApp), document.getElementById('root'));
 	});
 }
