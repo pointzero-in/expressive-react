@@ -1,14 +1,12 @@
-
-
 import Todo from '../models/todo';
 
 export function getTodos(req, res) {
 	Todo.find().sort('-created')
-		.exec((err, todos) => {
-			if (err) {
-				res.status(500).send(err);
+		.exec((error, todos) => {
+			if (error) {
+				res.json({ success: false, error });
 			}
-			res.json({ todos });
+			res.json({ success: true, todos });
 		});
 }
 
@@ -18,39 +16,39 @@ export function addTodo(req, res) {
 	}
 
 	const newTodo = new Todo(req.body.todo);
-	newTodo.save((err, todo) => {
-		if (err) {
-			res.status(500).send(err);
+	newTodo.save((error, todo) => {
+		if (error) {
+			res.json({ success: false, error });
 		}
-		res.json({ todo });
+		res.json({ success: true, todo });
 	});
 }
 
 export function getTodo(req, res) {
 	Todo.findOne({ _id: req.params.id })
-		.exec((err, todo) => {
-			if (err) {
-				res.status(500).send(err);
+		.exec((error, todo) => {
+			if (error) {
+				res.json({ success: false, error });
 			}
-			res.json({ todo });
+			res.json({ success: true, todo });
 		});
 }
 
 export function updateTodo(req, res) {
 	Todo.findOneAndUpdate({ _id: req.params.id }, req.body.todo, { new: true })
-		.exec((err, todo) => {
-			if (err) {
-				res.status(500).send(err);
+		.exec((error, todo) => {
+			if (error) {
+				res.json({ success: false, error });
 			}
-			res.json({ todo });
+			res.json({ success: true, todo });
 		});
 }
 
 export function deleteTodo(req, res) {
 	Todo.findOne({ _id: req.params.id })
-		.exec((err, todo) => {
-			if (err) {
-				res.status(500).send(err);
+		.exec((error, todo) => {
+			if (error) {
+				res.json({ success: false, error });
 			}
 
 			todo.remove(() => {

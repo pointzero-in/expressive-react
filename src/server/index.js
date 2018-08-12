@@ -1,4 +1,3 @@
-import path from 'path';
 import compression from 'compression';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -26,11 +25,13 @@ app.use(STATIC_PATH, express.static('dist'));
 app.use(STATIC_PATH, express.static('public'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use('/api', routes);
 
-app.get('/', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '../../dist/index.html'));
+app.use((req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "http://localhost:7000");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
 });
+app.use('/api', routes);
 
 app.listen(WEB_PORT, () => {
 	// eslint-disable-next-line no-console

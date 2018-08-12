@@ -60,6 +60,9 @@ export default {
 		headers: {
 			'Access-Control-Allow-Origin': '*',
 		},
+		proxy: {
+      '/api': 'http://localhost:3000'
+    }
 	},
 	optimization: {
 			splitChunks: {
