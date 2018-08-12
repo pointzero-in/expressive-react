@@ -10,6 +10,7 @@ import History from '../History';
 
 import RootReducer from "../Reducers/RootReducer";
 import rootRunner from "../Sagas/RootSaga";
+import DashboardReducer from '../Scenes/Dashboard/Reducers/DashboardReducer';
 
 const sagaMiddleware = createSagaMiddleware();
 const initialState = Map();
@@ -35,6 +36,7 @@ const middleware = () => {
 const Store = createStore(
 	connectRouter(History)(combineReducers({
 		root: RootReducer,
+		dashboard: DashboardReducer,
 	})),
 	initialState,
 	middleware(),
